@@ -1821,7 +1821,11 @@ class Api:
 
     @staticmethod
     def room_context(
-        access_token: str, room_id: str, event_id: str, limit: Optional[int] = None
+        access_token: str,
+        room_id: str,
+        event_id: str,
+        limit: Optional[int] = None,
+        filter: Optional[Dict[str, Any]] = None,
     ) -> Tuple[str, str]:
         """Fetch a number of events that happened before and after an event.
         This allows clients to get the context surrounding an event.
@@ -1835,11 +1839,18 @@ class Api:
             event_id (str): The event_id of the event that we wish to get the
                 context for.
             limit(int, optional): The maximum number of events to request.
+            message_filter (Optional[Dict[Any, Any]]):
+                A filter dict that should be used for this room messages
+                request.
         """
         query_parameters = {"access_token": access_token}
 
         if limit:
             query_parameters["limit"] = limit
+
+        if isinstance(filter, dict):
+            filter_json = json.dumps(filter, separators=(",", ":"))
+            query_parameters["filter"] = filter_json
 
         path = ["rooms", room_id, "context", event_id]
 

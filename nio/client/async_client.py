@@ -2731,6 +2731,7 @@ class AsyncClient(Client):
         room_id: str,
         event_id: str,
         limit: Optional[int] = None,
+        filter: Optional[Dict[Any, Any]] = None,
     ) -> Union[RoomContextResponse, RoomContextError]:
         """Fetch a number of events that happened before and after an event.
 
@@ -2747,9 +2748,14 @@ class AsyncClient(Client):
             event_id (str): The event_id of the event that we wish to get the
                 context for.
             limit(int, optional): The maximum number of events to request.
+            filter (Optional[Dict[Any, Any]]):
+                A filter dict that should be used for this room messages
+                request.
         """
 
-        method, path = Api.room_context(self.access_token, room_id, event_id, limit)
+        method, path = Api.room_context(
+            self.access_token, room_id, event_id, limit, filter
+        )
 
         return await self._send(
             RoomContextResponse, method, path, response_data=(room_id,)
